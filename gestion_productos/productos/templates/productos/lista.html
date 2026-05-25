@@ -1,7 +1,18 @@
 {% extends 'productos/base.html' %}
 {% block title %}Inventario{% endblock %}
 {% block nav_lista %}active{% endblock %}
+{% block tnav_lista %}active{% endblock %}
 {% block breadcrumb %}Lista de productos{% endblock %}
+
+{% block back_btn %}
+<a href="/" class="topbar-back" aria-label="Volver al inicio">
+    <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8">
+        <line x1="12" y1="6.5" x2="1" y2="6.5"/>
+        <polyline points="5,2.5 1,6.5 5,10.5"/>
+    </svg>
+    Inicio
+</a>
+{% endblock %}
 
 {% block content %}
 
@@ -28,8 +39,7 @@
             </svg>
             Nuevo producto
         </a>
-    </div>
-</div>
+    </div></div>
 
 <!-- ═══ STATS GRID ═══ -->
 <div class="stats-grid">
