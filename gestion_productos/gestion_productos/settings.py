@@ -8,11 +8,16 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-cambiar-en-pr
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-# Para Railway: acepta cualquier host si está en producción
-RAILWAY_STATIC_URL = os.environ.get('RAILWAY_STATIC_URL')
-if RAILWAY_STATIC_URL:
-    ALLOWED_HOSTS += [RAILWAY_STATIC_URL.replace('https://', '').replace('http://', '')]
-    CSRF_TRUSTED_ORIGINS = [RAILWAY_STATIC_URL]
+# Railway: healthcheck y dominio público
+ALLOWED_HOSTS += [
+    '.railway.app',
+    'healthcheck.railway.app',
+]
+
+RAILWAY_PUBLIC_DOMAIN = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
+if RAILWAY_PUBLIC_DOMAIN:
+    ALLOWED_HOSTS.append(RAILWAY_PUBLIC_DOMAIN)
+    CSRF_TRUSTED_ORIGINS = [f'https://{RAILWAY_PUBLIC_DOMAIN}']
 
 # ─── APPS ────────────────────────────────────────────────────
 INSTALLED_APPS = [
