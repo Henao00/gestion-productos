@@ -1,0 +1,37 @@
+{% extends 'productos/base.html' %}
+{% block title %}Eliminar · Productos{% endblock %}
+{% block breadcrumb %}Eliminar producto{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Eliminar <em>producto</em></h1>
+        <p class="page-meta">Esta acción no se puede deshacer</p>
+    </div>
+    <a href="/" class="btn btn-outline">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="11" y1="6" x2="1" y2="6"/><polyline points="5,2 1,6 5,10"/>
+        </svg>
+        Volver
+    </a>
+</div>
+
+<div class="confirm-card">
+    <div class="confirm-icon">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="var(--accent)" stroke-width="1.5">
+            <path d="M3 5h12M7 5V3.5a1.5 1.5 0 013 0V5M6 5l.75 9.5h4.5L12 5"/>
+        </svg>
+    </div>
+    <div class="confirm-title">¿Eliminar "{{ producto.nombre }}"?</div>
+    <p class="confirm-text">
+        Estás a punto de eliminar este producto del sistema. Una vez confirmado, todos sus datos serán borrados permanentemente.
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="confirm-actions">
+            <button type="submit" class="btn btn-danger-soft">Sí, eliminar</button>
+            <a href="/" class="btn btn-outline">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

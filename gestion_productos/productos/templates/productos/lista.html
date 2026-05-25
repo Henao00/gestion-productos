@@ -1,0 +1,120 @@
+{% extends 'productos/base.html' %}
+{% block title %}Inventario · Productos{% endblock %}
+{% block nav_lista %}active{% endblock %}
+{% block breadcrumb %}Inventario{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Inventario de <em>productos</em></h1>
+        <p class="page-meta">{{ total_productos }} registros · actualizado ahora</p>
+    </div>
+</div>
+
+<div class="stats-row">
+    <div class="stat s-neutral">
+        <div class="stat-label">Total productos</div>
+        <div class="stat-value">{{ total_productos }}</div>
+        <div class="stat-sub">en el sistema</div>
+    </div>
+    <div class="stat s-green">
+        <div class="stat-label">Activos</div>
+        <div class="stat-value">{{ total_activos }}</div>
+        <div class="stat-sub">disponibles para venta</div>
+    </div>
+    <div class="stat s-amber">
+        <div class="stat-label">Valor inventario</div>
+        <div class="stat-value" style="font-size:22px;">${{ valor_inventario|floatformat:0 }}</div>
+        <div class="stat-sub">suma de precios</div>
+    </div>
+</div>
+
+<form method="get">
+    <div class="toolbar">
+        <div class="search-wrap">
+            <svg class="search-ico" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="6" cy="6" r="4.5"/>
+                <line x1="9.5" y1="9.5" x2="13" y2="13"/>
+            </svg>
+            <input type="text" name="q" value="{{ query }}" placeholder="Buscar por nombre...">
+        </div>
+        <select name="categoria" class="filter-select" onchange="this.form.submit()">
+            <option value="">Todas las categorías</option>
+            {% for val, label in categorias %}
+            <option value="{{ val }}" {% if categoria_seleccionada == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        {% if query %}<button type="submit" class="btn btn-outline btn-sm">Buscar</button>{% endif %}
+        {% if query or categoria_seleccionada %}
+        <a href="/" class="btn btn-outline btn-sm">Limpiar filtros</a>
+        {% endif %}
+        <div class="toolbar-spacer"></div>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--ink-3);">{{ productos|length }} resultado{{ productos|length|pluralize }}</span>
+    </div>
+</form>
+
+<div class="table-card">
+    <div class="table-header">
+        <span class="table-header-label">Productos</span>
+        <span class="table-header-count">{{ productos|length }} de {{ total_productos }}</span>
+    </div>
+
+    {% if productos %}
+    <table>
+        <thead>
+            <tr>
+                <th style="width:48px;">ID</th>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th style="width:120px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for p in productos %}
+        <tr>
+            <td><span class="prod-id">#{{ p.pk }}</span></td>
+            <td>
+                <div class="prod-name">{{ p.nombre }}</div>
+                {% if p.descripcion %}<div class="prod-desc">{{ p.descripcion }}</div>{% endif %}
+            </td>
+            <td><span class="badge badge-cat">{{ p.get_categoria_display }}</span></td>
+            <td><span class="price">${{ p.precio|floatformat:0 }}</span></td>
+            <td><span class="stock-val">{{ p.stock }} uds</span></td>
+            <td>
+                {% if p.activo %}
+                <span class="badge badge-active"><span class="badge-dot"></span>Activo</span>
+                {% else %}
+                <span class="badge badge-inactive"><span class="badge-dot"></span>Inactivo</span>
+                {% endif %}
+            </td>
+            <td>
+                <div class="row-actions">
+                    <a href="/editar/{{ p.pk }}/" class="btn btn-outline btn-sm">Editar</a>
+                    <a href="/eliminar/{{ p.pk }}/" class="btn btn-danger-soft btn-sm">—</a>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty">
+        <div class="empty-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" color="var(--ink-3)">
+                <rect x="3" y="4" width="14" height="14" rx="2"/>
+                <line x1="3" y1="8" x2="17" y2="8"/>
+                <line x1="7" y1="12" x2="13" y2="12"/>
+            </svg>
+        </div>
+        <div class="empty-title">Sin resultados</div>
+        <div class="empty-sub">{% if query %}No hay productos que coincidan con "{{ query }}"{% else %}Aún no hay productos registrados{% endif %}</div>
+        {% if not query %}
+        <a href="/nuevo/" class="btn btn-primary" style="margin-top:16px;">Registrar producto</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

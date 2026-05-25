@@ -1,0 +1,79 @@
+{% extends 'productos/base.html' %}
+{% block title %}{{ titulo }} · Productos{% endblock %}
+{% block nav_nuevo %}{% if not producto %}active{% endif %}{% endblock %}
+{% block breadcrumb %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">
+            {% if producto %}Editando <em>producto</em>{% else %}Nuevo <em>producto</em>{% endif %}
+        </h1>
+        <p class="page-meta">{% if producto %}ID #{{ producto.pk }} · {{ producto.nombre }}{% else %}Completa el formulario para registrar{% endif %}</p>
+    </div>
+    <a href="/" class="btn btn-outline">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="11" y1="6" x2="1" y2="6"/><polyline points="5,2 1,6 5,10"/>
+        </svg>
+        Volver
+    </a>
+</div>
+
+<div class="form-wrap">
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-card">
+
+            <div class="form-section">
+                <div class="form-section-title">Información general</div>
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label for="{{ form.nombre.id_for_label }}">Nombre del producto</label>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}<span class="error-msg">{{ form.nombre.errors.0 }}</span>{% endif %}
+                    </div>
+                    <div class="form-group full">
+                        <label for="{{ form.descripcion.id_for_label }}">Descripción</label>
+                        {{ form.descripcion }}
+                    </div>
+                    <div class="form-group full">
+                        <label for="{{ form.categoria.id_for_label }}">Categoría</label>
+                        {{ form.categoria }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title">Precio y stock</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="{{ form.precio.id_for_label }}">Precio (COP)</label>
+                        {{ form.precio }}
+                        {% if form.precio.errors %}<span class="error-msg">{{ form.precio.errors.0 }}</span>{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.stock.id_for_label }}">Unidades en stock</label>
+                        {{ form.stock }}
+                        {% if form.stock.errors %}<span class="error-msg">{{ form.stock.errors.0 }}</span>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title">Disponibilidad</div>
+                <label class="checkbox-field" for="{{ form.activo.id_for_label }}">
+                    {{ form.activo }}
+                    <span class="checkbox-label">Producto activo — visible y disponible para venta</span>
+                </label>
+            </div>
+
+            <div class="form-footer">
+                <button type="submit" class="btn btn-primary">
+                    {% if producto %}Guardar cambios{% else %}Registrar producto{% endif %}
+                </button>
+                <a href="/" class="btn btn-outline">Cancelar</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
