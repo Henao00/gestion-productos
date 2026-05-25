@@ -1,120 +1,262 @@
 {% extends 'productos/base.html' %}
-{% block title %}Inventario · Productos{% endblock %}
+{% block title %}Inventario{% endblock %}
 {% block nav_lista %}active{% endblock %}
 {% block breadcrumb %}Inventario{% endblock %}
 
 {% block content %}
+
+<!-- ═══ PAGE HEADER ═══ -->
 <div class="page-header">
-    <div>
-        <h1 class="page-title">Inventario de <em>productos</em></h1>
-        <p class="page-meta">{{ total_productos }} registros · actualizado ahora</p>
+    <div class="page-header-left">
+        <div class="page-eyebrow">Inventario</div>
+        <h1 class="page-title">
+            Gestión de <span class="grad">Productos</span>
+        </h1>
+        <div class="page-meta">
+            <span>{{ total_productos }} registros</span>
+            <span class="dot"></span>
+            <span>Actualizado ahora</span>
+            <span class="dot"></span>
+            <span style="color: var(--green); font-weight: 500;">● Sistema activo</span>
+        </div>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center; flex-shrink:0;">
+        <a href="/nuevo/" class="btn btn-primary">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2">
+                <line x1="7" y1="1" x2="7" y2="13"/>
+                <line x1="1" y1="7" x2="13" y2="7"/>
+            </svg>
+            Nuevo producto
+        </a>
     </div>
 </div>
 
-<div class="stats-row">
-    <div class="stat s-neutral">
-        <div class="stat-label">Total productos</div>
+<!-- ═══ STATS GRID ═══ -->
+<div class="stats-grid">
+
+    <div class="stat-card s-purple">
+        <div class="stat-card-glow"></div>
+        <div class="stat-header">
+            <div class="stat-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="1.5" y="2" width="13" height="12" rx="2"/>
+                    <line x1="1.5" y1="6" x2="14.5" y2="6"/>
+                    <line x1="5" y1="9.5" x2="11" y2="9.5"/>
+                </svg>
+            </div>
+            <div class="stat-trend neutral">Total</div>
+        </div>
         <div class="stat-value">{{ total_productos }}</div>
-        <div class="stat-sub">en el sistema</div>
+        <div class="stat-label">Productos registrados</div>
     </div>
-    <div class="stat s-green">
-        <div class="stat-label">Activos</div>
+
+    <div class="stat-card s-green">
+        <div class="stat-card-glow"></div>
+        <div class="stat-header">
+            <div class="stat-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <polyline points="1.5,9 5,5.5 8,7.5 11,3.5 14.5,6"/>
+                    <line x1="1.5" y1="13" x2="14.5" y2="13"/>
+                </svg>
+            </div>
+            <div class="stat-trend up">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="2,7 5,3 8,7"/>
+                </svg>
+                Activos
+            </div>
+        </div>
         <div class="stat-value">{{ total_activos }}</div>
-        <div class="stat-sub">disponibles para venta</div>
+        <div class="stat-label">Disponibles para venta</div>
     </div>
-    <div class="stat s-amber">
-        <div class="stat-label">Valor inventario</div>
-        <div class="stat-value" style="font-size:22px;">${{ valor_inventario|floatformat:0 }}</div>
-        <div class="stat-sub">suma de precios</div>
+
+    <div class="stat-card s-cyan">
+        <div class="stat-card-glow"></div>
+        <div class="stat-header">
+            <div class="stat-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="8" cy="8" r="6.5"/>
+                    <path d="M8 4.5v3.5l2.5 1.5"/>
+                </svg>
+            </div>
+            <div class="stat-trend neutral">COP</div>
+        </div>
+        <div class="stat-value" style="font-size:26px;">${{ valor_inventario|floatformat:0 }}</div>
+        <div class="stat-label">Valor total del inventario</div>
     </div>
+
 </div>
 
-<form method="get">
+<!-- ═══ TOOLBAR ═══ -->
+<form method="get" id="filterForm">
     <div class="toolbar">
         <div class="search-wrap">
-            <svg class="search-ico" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="6" cy="6" r="4.5"/>
-                <line x1="9.5" y1="9.5" x2="13" y2="13"/>
+            <svg class="search-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="7" cy="7" r="5"/>
+                <line x1="11" y1="11" x2="15" y2="15"/>
             </svg>
-            <input type="text" name="q" value="{{ query }}" placeholder="Buscar por nombre...">
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="Buscar productos..."
+                aria-label="Buscar productos"
+                autocomplete="off"
+            >
         </div>
-        <select name="categoria" class="filter-select" onchange="this.form.submit()">
+
+        <select name="categoria" class="filter-select" onchange="this.form.submit()" aria-label="Filtrar por categoría">
             <option value="">Todas las categorías</option>
             {% for val, label in categorias %}
             <option value="{{ val }}" {% if categoria_seleccionada == val %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
-        {% if query %}<button type="submit" class="btn btn-outline btn-sm">Buscar</button>{% endif %}
-        {% if query or categoria_seleccionada %}
-        <a href="/" class="btn btn-outline btn-sm">Limpiar filtros</a>
+
+        {% if query %}
+        <button type="submit" class="btn btn-secondary btn-sm">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="5.5" cy="5.5" r="4"/>
+                <line x1="9" y1="9" x2="11.5" y2="11.5"/>
+            </svg>
+            Buscar
+        </button>
         {% endif %}
+
+        {% if query or categoria_seleccionada %}
+        <a href="/" class="btn btn-ghost btn-sm">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="1" y1="1" x2="11" y2="11"/>
+                <line x1="11" y1="1" x2="1" y2="11"/>
+            </svg>
+            Limpiar
+        </a>
+        {% endif %}
+
         <div class="toolbar-spacer"></div>
-        <span style="font-family:var(--mono);font-size:11px;color:var(--ink-3);">{{ productos|length }} resultado{{ productos|length|pluralize }}</span>
+
+        <div class="toolbar-count">
+            {{ productos|length }} resultado{{ productos|length|pluralize }}
+        </div>
     </div>
 </form>
 
-<div class="table-card">
-    <div class="table-header">
-        <span class="table-header-label">Productos</span>
-        <span class="table-header-count">{{ productos|length }} de {{ total_productos }}</span>
+<!-- ═══ TABLE ═══ -->
+<div class="table-container">
+    <div class="table-top">
+        <div class="table-top-label">
+            <span class="dot"></span>
+            Productos
+        </div>
+        <div class="table-top-meta">{{ productos|length }} de {{ total_productos }} registros</div>
     </div>
 
     {% if productos %}
-    <table>
-        <thead>
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:60px;">ID</th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Estado</th>
+                    <th style="width:130px; text-align:right;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for p in productos %}
             <tr>
-                <th style="width:48px;">ID</th>
-                <th>Producto</th>
-                <th>Categoría</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th>Estado</th>
-                <th style="width:120px;"></th>
+                <td>
+                    <span class="cell-id">#{{ p.pk }}</span>
+                </td>
+                <td>
+                    <div class="cell-product">
+                        <span class="cell-name">{{ p.nombre }}</span>
+                        {% if p.descripcion %}
+                        <span class="cell-desc">{{ p.descripcion }}</span>
+                        {% endif %}
+                    </div>
+                </td>
+                <td>
+                    <span class="badge badge-cat">{{ p.get_categoria_display }}</span>
+                </td>
+                <td>
+                    <span class="cell-price">${{ p.precio|floatformat:0 }}</span>
+                </td>
+                <td>
+                    <span class="cell-stock">{{ p.stock }} uds</span>
+                </td>
+                <td>
+                    {% if p.activo %}
+                    <span class="badge badge-active">
+                        <span class="badge-dot"></span>
+                        Activo
+                    </span>
+                    {% else %}
+                    <span class="badge badge-inactive">
+                        <span class="badge-dot"></span>
+                        Inactivo
+                    </span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="row-actions" style="justify-content:flex-end;">
+                        <a href="/editar/{{ p.pk }}/"
+                           class="btn btn-ghost btn-xs"
+                           title="Editar {{ p.nombre }}"
+                           aria-label="Editar {{ p.nombre }}">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path d="M8.5 1.5l2 2L4 10H2v-2L8.5 1.5z"/>
+                            </svg>
+                            Editar
+                        </a>
+                        <a href="/eliminar/{{ p.pk }}/"
+                           class="btn btn-danger btn-xs"
+                           title="Eliminar {{ p.nombre }}"
+                           aria-label="Eliminar {{ p.nombre }}">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <polyline points="1,3 11,3"/>
+                                <path d="M4 3V2a1 1 0 011-1h2a1 1 0 011 1v1"/>
+                                <path d="M2 3l.75 7.5h6.5L10 3"/>
+                            </svg>
+                        </a>
+                    </div>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-        {% for p in productos %}
-        <tr>
-            <td><span class="prod-id">#{{ p.pk }}</span></td>
-            <td>
-                <div class="prod-name">{{ p.nombre }}</div>
-                {% if p.descripcion %}<div class="prod-desc">{{ p.descripcion }}</div>{% endif %}
-            </td>
-            <td><span class="badge badge-cat">{{ p.get_categoria_display }}</span></td>
-            <td><span class="price">${{ p.precio|floatformat:0 }}</span></td>
-            <td><span class="stock-val">{{ p.stock }} uds</span></td>
-            <td>
-                {% if p.activo %}
-                <span class="badge badge-active"><span class="badge-dot"></span>Activo</span>
-                {% else %}
-                <span class="badge badge-inactive"><span class="badge-dot"></span>Inactivo</span>
-                {% endif %}
-            </td>
-            <td>
-                <div class="row-actions">
-                    <a href="/editar/{{ p.pk }}/" class="btn btn-outline btn-sm">Editar</a>
-                    <a href="/eliminar/{{ p.pk }}/" class="btn btn-danger-soft btn-sm">—</a>
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
     {% else %}
-    <div class="empty">
-        <div class="empty-icon">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" color="var(--ink-3)">
-                <rect x="3" y="4" width="14" height="14" rx="2"/>
-                <line x1="3" y1="8" x2="17" y2="8"/>
-                <line x1="7" y1="12" x2="13" y2="12"/>
+    <div class="empty-state">
+        <div class="empty-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5">
+                <rect x="3" y="5" width="18" height="16" rx="2"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+                <line x1="8" y1="15" x2="16" y2="15"/>
             </svg>
         </div>
         <div class="empty-title">Sin resultados</div>
-        <div class="empty-sub">{% if query %}No hay productos que coincidan con "{{ query }}"{% else %}Aún no hay productos registrados{% endif %}</div>
+        <div class="empty-sub">
+            {% if query %}
+            No hay productos que coincidan con "{{ query }}"
+            {% else %}
+            Aún no hay productos registrados en el sistema
+            {% endif %}
+        </div>
         {% if not query %}
-        <a href="/nuevo/" class="btn btn-primary" style="margin-top:16px;">Registrar producto</a>
+        <a href="/nuevo/" class="btn btn-primary" style="margin-top: 8px;">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2.2">
+                <line x1="6.5" y1="1" x2="6.5" y2="12"/>
+                <line x1="1" y1="6.5" x2="12" y2="6.5"/>
+            </svg>
+            Registrar primer producto
+        </a>
         {% endif %}
     </div>
     {% endif %}
 </div>
+
 {% endblock %}
