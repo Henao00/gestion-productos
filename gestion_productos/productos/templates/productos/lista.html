@@ -1,7 +1,7 @@
 {% extends 'productos/base.html' %}
 {% block title %}Inventario{% endblock %}
 {% block nav_lista %}active{% endblock %}
-{% block breadcrumb %}Inventario{% endblock %}
+{% block breadcrumb %}Lista de productos{% endblock %}
 
 {% block content %}
 
@@ -123,7 +123,7 @@
         {% endif %}
 
         {% if query or categoria_seleccionada %}
-        <a href="/" class="btn btn-ghost btn-sm">
+        <a href="/productos/" class="btn btn-ghost btn-sm">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="1" y1="1" x2="11" y2="11"/>
                 <line x1="11" y1="1" x2="1" y2="11"/>
