@@ -14,10 +14,15 @@ ALLOWED_HOSTS += [
     'healthcheck.railway.app',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.railway.app',
+    'https://gestion-productos-production-b133.up.railway.app',
+]
+
 RAILWAY_PUBLIC_DOMAIN = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
 if RAILWAY_PUBLIC_DOMAIN:
     ALLOWED_HOSTS.append(RAILWAY_PUBLIC_DOMAIN)
-    CSRF_TRUSTED_ORIGINS = [f'https://{RAILWAY_PUBLIC_DOMAIN}']
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RAILWAY_PUBLIC_DOMAIN}')
 
 # ─── APPS ────────────────────────────────────────────────────
 INSTALLED_APPS = [
